@@ -1,30 +1,27 @@
 import { Arg, FieldResolver, Int, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { Author, Book } from '../entities';
-import { data } from '../data';
-import { BookCreateInput } from './types/BookCreateInput';
+import { BookCreateInput } from './types';
+import { getConnection } from 'typeorm/index';
 
 @Resolver(of => Book)
 export class BookResolver {
     @Query(returns => [Book])
     public async books(): Promise<Book[]> {
-        return data.books;
+        return getConnection().getRepository(Book).find();
     }
 
     @Query(returns => Book, { nullable: true })
     public async book(@Arg('bookId', type => Int) bookId: number): Promise<Book> {
-        return data.books.find(book => bookId === book.bookId);
+        return getConnection().getRepository(Book).findOne(bookId);
     }
 
-    @FieldResolver()
+    @FieldResolver(returns => Author)
     public async author(@Root() book: Book): Promise<Author> {
-        return data.authors.find(author => author.authorId === book.authorId);
+        return book.author;
     }
 
     @Mutation(returns => Book)
     async createBook(@Arg('book') bookCreateInput: BookCreateInput): Promise<Book> {
-        const book = new Book(Object.assign({ bookId: data.bookId }, bookCreateInput));
-        data.books.push(book);
-        data.bookId += 1;
-        return book;
+        return getConnection().getRepository(Book).save(bookCreateInput);
     }
 }
