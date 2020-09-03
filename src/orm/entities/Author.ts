@@ -16,4 +16,8 @@ export class Author {
 
     @OneToMany(() => Book, (book) => book.author)
     books: Book[];
+
+    constructor(data: Partial<Author>) {
+        Object.assign(this, data);
+    }
 }

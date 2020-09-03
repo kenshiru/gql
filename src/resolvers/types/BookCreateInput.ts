@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from 'type-graphql';
-import { Book } from '../../entities';
+import { Book } from '../../orm/entities';
 
 @InputType()
 export class BookCreateInput implements Partial<Book> {

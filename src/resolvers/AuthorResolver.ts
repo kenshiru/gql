@@ -1,12 +1,16 @@
 import { Arg, Mutation, Resolver } from 'type-graphql';
-import { Author } from '../entities';
+import { Author } from '../orm/entities';
 import { AuthorCreateInput } from './types';
-import { getConnection } from 'typeorm/index';
+import { Inject } from 'typedi';
+import { AuthorRepository } from '../orm';
 
 @Resolver(of => Author)
 export class AuthorResolver {
+    @Inject(type => AuthorRepository)
+    protected authorRepository: AuthorRepository;
+
     @Mutation(returns => Author)
     async createAuthor(@Arg('author') authorCreateInput: AuthorCreateInput): Promise<Author> {
-        return getConnection().getRepository(Author).save(authorCreateInput);
+        return this.authorRepository.save(authorCreateInput);
     }
 }

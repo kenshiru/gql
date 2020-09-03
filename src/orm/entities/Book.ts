@@ -19,10 +19,14 @@ export class Book {
     public pageCount: number;
 
     @Field(type => Author)
-    @ManyToOne(() => Author, (author) => author.books, { eager: true })
+    @ManyToOne(() => Author, (author) => author.books, { lazy: true })
     @JoinColumn([{ name: 'author_id', referencedColumnName: 'authorId' }])
     public author: Author;
 
     @Column('int', { name: 'author_id' })
     public authorId: number;
+
+    constructor(data: Partial<Book>) {
+        Object.assign(this, data);
+    }
 }
