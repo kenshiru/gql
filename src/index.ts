@@ -3,22 +3,19 @@ import { Container } from 'typedi';
 import { AuthorRepository, BookRepository } from './orm';
 import * as typeorm from 'typeorm';
 import * as entities from './orm/entities';
+import * as fs from 'fs';
 
 (async () => {
+    const config = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
+
     await typeorm.createConnection({
-        type: 'postgres',
-        host: 'localhost',
-        port: 5432,
-        username: 'apm',
-        password: '123',
-        database: 'gql',
+        ...config.database,
         entities: Object.values(entities),
-        logging: true
     });
 
     // Bind repositories
     Container.set(AuthorRepository, typeorm.getCustomRepository(AuthorRepository));
     Container.set(BookRepository, typeorm.getCustomRepository(BookRepository));
 
-    await server.listen(4040);
+    await server.listen(config.server.port);
 })();

@@ -19,10 +19,11 @@ export class Book {
     public pageCount: number;
 
     @Field(type => Author)
-    @ManyToOne(() => Author, (author) => author.books, { lazy: true })
+    @ManyToOne(() => Author, (author) => author.books)
     @JoinColumn([{ name: 'author_id', referencedColumnName: 'authorId' }])
     public author: Author;
 
+    @Field(type => Int)
     @Column('int', { name: 'author_id' })
     public authorId: number;
 
